@@ -1,0 +1,8 @@
+POST http://localhost:8080/user/register?username=dekun&password=password
+###
+POST http://localhost:8080/user/login?username=dekun&password=password
+###
+GET http://localhost:8080/user/userinfo
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGFpbXMiOnsiaWQiOjEsInVzZXJuYW1lIjoiZGVrdW4ifSwiZXhwIjoxNzMxOTA3MDI5fQ.39NiN_c_V4hY9vwrbMeoJXJXxwzcDjcxtl6cPXcEdKc
+###
+PUT http://localhost:8080/user/loginout

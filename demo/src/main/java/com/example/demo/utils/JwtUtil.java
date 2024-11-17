@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class JwtUtil {
 
-    private static final String KEY = System.getenv("JAVA_HOME");
+    private static final String KEY = System.getenv("JAVA_HOME") + "42"; // 以防环境中忘记设置JAVA_HOME
 
     private JwtUtil() {
 

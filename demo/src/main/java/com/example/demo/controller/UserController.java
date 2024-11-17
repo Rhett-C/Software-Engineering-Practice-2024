@@ -3,8 +3,8 @@ package com.example.demo.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+// import org.springframework.data.redis.core.StringRedisTemplate;
+// import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.pojo.Result;
 import com.example.demo.pojo.User;
 import com.example.demo.service.UserService;
+import com.example.demo.utils.InMemoryStore;
 import com.example.demo.utils.JwtUtil;
 import com.example.demo.utils.Md5Util;
 import com.example.demo.utils.ThreadLocalUtil;
@@ -33,7 +34,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService us;
-    private final StringRedisTemplate sRedisTemplate;
+    // private final StringRedisTemplate sRedisTemplate; // NOTE: Redis数据库
+    private final InMemoryStore inMemoryStore;
     private static final String TOKEN_KEY_ID = "id";
     private static final String TOKEN_KEY_USERNAME = "username";
 
@@ -95,9 +97,10 @@ public class UserController {
             claims.put(TOKEN_KEY_USERNAME, user.getUsername());
             String token = JwtUtil.genToken(claims);
 
-            // 存入Redis
-            ValueOperations<String, String> op = sRedisTemplate.opsForValue();
-            op.set(username, token);
+            // NOTE: 存入Redis
+            // ValueOperations<String, String> op = sRedisTemplate.opsForValue();
+            // op.set(username, token);
+            inMemoryStore.put(username, token);
             return Result.success(token);
         }
         return Result.error("用户 " + username + " 密码错误");
@@ -107,8 +110,10 @@ public class UserController {
     public Result<String> logout() {
         // 丢弃 token
         Map<String, Object> userInfo = ThreadLocalUtil.get();
-        ValueOperations<String, String> op = sRedisTemplate.opsForValue();
-        op.getOperations().delete((String) userInfo.get(TOKEN_KEY_USERNAME));
+        // NOTE: 存入Redis
+        // ValueOperations<String, String> op = sRedisTemplate.opsForValue(); //
+        // op.getOperations().delete((String) userInfo.get(TOKEN_KEY_USERNAME));
+        inMemoryStore.remove((String) userInfo.get(TOKEN_KEY_USERNAME));
         return Result.success();
     }
 
@@ -153,10 +158,11 @@ public class UserController {
     public Result<String> updatePwd(@RequestBody Map<String, String> pwd) {
         // UserService 校验参数，抛出自定义异常，由全局异常处理器处理
         us.updatePwd(pwd, false);
-        ValueOperations<String, String> op = sRedisTemplate.opsForValue();
         Map<String, Object> userinfo = ThreadLocalUtil.get();
-        // 消除 Redis 中的 token 副本，修改了密码，需重新获取 token
-        op.getOperations().delete((String) userinfo.get(TOKEN_KEY_USERNAME));
+        // NOTE: 消除 Redis 中的 token 副本，修改了密码，需重新获取 token
+        // ValueOperations<String, String> op = sRedisTemplate.opsForValue();
+        // op.getOperations().delete((String) userinfo.get(TOKEN_KEY_USERNAME));
+        inMemoryStore.remove((String) userinfo.get(TOKEN_KEY_USERNAME));
         return Result.success();
     }
 }

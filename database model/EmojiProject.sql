@@ -3,47 +3,41 @@
 /* Created on:     2024/10/2 4:50:14                            */
 /*==============================================================*/
 
-
 /*==============================================================*/
 /* Table: admin_user                                            */
 /*==============================================================*/
-create table admin_user
-(
-   user_id              int not null,
-   authority_level      int not null,
-   user_name            varchar(128) not null,
-   password             varchar(128),
-   email                varchar(128),
-   phone                varchar(32),
-   primary key (user_id),
-   unique key AK_Key_2 (user_name)
+CREATE TABLE admin_user (
+    id int NOT NULL auto_increment,
+    authorityLevel int NOT NULL,
+    username varchar(128) NOT NULL,
+    password varchar(128),
+    email varchar(128),
+    phone varchar(32),
+    PRIMARY KEY (id),
+    UNIQUE KEY AK_Key_2 (username)
 );
 
 /*==============================================================*/
 /* Table: client_user                                           */
 /*==============================================================*/
-create table client_user
-(
-   user_id              int not null,
-   user_name            varchar(128) not null,
-   password             varchar(128),
-   email                varchar(128),
-   phone                varchar(32),
-   primary key (user_id),
-   unique key AK_Key_2 (user_name)
+CREATE TABLE client_user (
+    id int NOT NULL auto_increment,
+    username varchar(128) NOT NULL,
+    password varchar(128),
+    email varchar(128),
+    phone varchar(32),
+    PRIMARY KEY (id),
+    UNIQUE KEY AK_Key_2 (username)
 );
 
 /*==============================================================*/
 /* Table: emoji_data                                            */
 /*==============================================================*/
-create table emoji_data
-(
-   serial_number        int not null auto_increment,
-   user_id              int not null,
-   emoji_type           int not null,
-   time                 datetime not null,
-   primary key (serial_number),
-   constraint FK_EMOJI_DA_USER_ID_CLIENT_U foreign key (user_id)
-      references client_user (user_id) on delete restrict on update restrict
+CREATE TABLE emoji_data (
+    serialNumber int NOT NULL auto_increment,
+    id int NOT NULL,
+    type int NOT NULL,
+    TIME datetime NOT NULL,
+    PRIMARY KEY (serialNumber),
+    CONSTRAINT FK_EMOJI_DA_USER_ID_CLIENT_U FOREIGN KEY (id) REFERENCES client_user (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
-

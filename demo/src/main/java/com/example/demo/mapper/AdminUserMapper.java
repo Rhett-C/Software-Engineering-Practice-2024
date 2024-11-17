@@ -10,13 +10,13 @@ import com.example.demo.pojo.User;
 @Mapper
 public interface AdminUserMapper {
 
-    @Select("select * from emoji_project.admin_user where user_id=#{userid}")
+    @Select("select * from emoji_project.admin_user where id=#{userid}")
     User findUserByUserId(Integer userid);
 
-    @Select("select * from emoji_project.admin_user where user_name=#{username}")
+    @Select("select * from emoji_project.admin_user where username=#{username}")
     User findUserByUserName(String username);
 
-    @Insert("insert into emoji_project.admin_user(user_name, password, authority_level) values(#{username},#{md5Password},#{authorityLevel})")
+    @Insert("insert into emoji_project.admin_user(username, password, authorityLevel) values(#{username},#{md5Password},#{authorityLevel})")
     void addUser(String username, String md5Password, Integer authorityLevel);
 
     @Update("update emoji_project.admin_user set username=#{username},email=#{email},phone=#{phone} where id=#{id}")
